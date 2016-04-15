@@ -101,7 +101,6 @@
 		<gwtexporter.version>2.5.1</gwtexporter.version>
 		<gwtp.version>1.5.1</gwtp.version>
 		<gin.version>2.1.2</gin.version>
-		<gwt-commons-lang3.version>3.4-1</gwt-commons-lang3.version>
 		<urlrewritefilter.version>4.0.4</urlrewritefilter.version>
 		<jetty-maven-plugin.version>8.1.16.v20140903</jetty-maven-plugin.version>
 		<maven-war-plugin.version>2.6</maven-war-plugin.version>
@@ -133,18 +132,6 @@
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>de.knightsoft-net</groupId>
-			<artifactId>gwt-commons-lang3</artifactId>
-			<version>${gwt-commons-lang3.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.knightsoft-net</groupId>
-			<artifactId>gwt-commons-lang3</artifactId>
-			<version>${gwt-commons-lang3.version}</version>
-			<classifier>sources</classifier>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

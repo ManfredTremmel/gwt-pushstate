@@ -24,8 +24,6 @@ import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceHistoryHandler.Historian;
 import com.google.gwt.user.client.Window;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers<String> {
 
   private final EventBus handlers = new SimpleEventBus();
@@ -38,10 +36,24 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
    * @param prelativePath relative path to use
    */
   PushStateHistorianImpl(final String prelativePath) {
-    this.relativePath = StringUtils.endsWith(prelativePath, "/") ? prelativePath
-        : StringUtils.defaultString(prelativePath) + "/";
+    this.relativePath = calculateRelativePath(prelativePath);
     this.initToken();
     this.registerPopstateHandler();
+  }
+
+  private static String calculateRelativePath(String prelativePath) {
+    String relativePath;
+    if (prelativePath != null && prelativePath.endsWith("/")) {
+      relativePath = prelativePath;
+    } else {
+      if (prelativePath == null) {
+        relativePath = "/";
+      }
+      else {
+        relativePath = prelativePath + "/";
+      }
+    }
+    return relativePath;
   }
 
   @Override
@@ -118,7 +130,7 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
     final String token = this.stripStartSlash(ptoken);
 
     if (token != null && relPath != null && token.startsWith(relPath)) {
-      return this.stripStartSlash(StringUtils.substring(token, relPath.length()));
+      return this.stripStartSlash(token.substring(relPath.length()));
     }
     return token;
   }
@@ -141,9 +153,9 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
   }
 
   private boolean matchesToken(final String pcompare) {
-    return StringUtils.equals(pcompare, this.token)
-        || StringUtils.equals(pcompare, this.token + "/")
-        || StringUtils.equals(this.token, pcompare + "/");
+    return pcompare.equals(this.token)
+        || pcompare.equals(this.token + "/")
+        || this.token.equals(pcompare + "/");
   }
 
   @Override
