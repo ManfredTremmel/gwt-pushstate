@@ -67,9 +67,9 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
     } else {
       if (this.setToken(ptoken)) {
         if (preplaceState) {
-          PushStateHistorianImpl.replaceState(this.relativePath, token);
+          PushStateHistorianImpl.replaceState(this.relativePath, this.token);
         } else {
-          PushStateHistorianImpl.pushState(this.relativePath, token);
+          PushStateHistorianImpl.pushState(this.relativePath, this.token);
         }
       }
     }

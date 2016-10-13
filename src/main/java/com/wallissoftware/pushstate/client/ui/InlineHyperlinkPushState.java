@@ -43,7 +43,7 @@ public class InlineHyperlinkPushState extends InlineHyperlink {
    */
   public InlineHyperlinkPushState(final String ptext, final String ptargetHistoryToken) {
     super(ptext, ptargetHistoryToken);
-    ensureDelegate();
+    this.ensureDelegate();
   }
 
   /**
@@ -51,29 +51,30 @@ public class InlineHyperlinkPushState extends InlineHyperlink {
    */
   public InlineHyperlinkPushState() {
     super();
-    ensureDelegate();
+    this.ensureDelegate();
   }
 
   private void ensureDelegate() {
-    if(delegate == null)
-      delegate = new HyperlinkPushStateDelegate(this);
-  }
-  
-  @Override
-  public void setTargetHistoryToken(String ptargetHistoryToken) {
-    ensureDelegate();
-    delegate.setTargetHistoryToken(ptargetHistoryToken);
+    if (this.delegate == null) {
+      this.delegate = new HyperlinkPushStateDelegate(this);
+    }
   }
 
-  
+  @Override
+  public void setTargetHistoryToken(final String ptargetHistoryToken) {
+    this.ensureDelegate();
+    this.delegate.setTargetHistoryToken(ptargetHistoryToken);
+  }
+
+
   @Override
   public String getTargetHistoryToken() {
-    return delegate.getTargetHistoryToken();
+    return this.delegate.getTargetHistoryToken();
   }
 
   @Override
   public void onBrowserEvent(final Event pevent) {
-    delegate.onBrowserEvent(pevent);
+    this.delegate.onBrowserEvent(pevent);
   }
 
 }

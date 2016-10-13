@@ -9,7 +9,7 @@ Add the gwt-pushstate dependency to your project:
     <dependency>
       <groupId>de.knightsoft-net</groupId>
       <artifactId>gwt-pushstate</artifactId>
-      <version>2.0.0.7</version>
+      <version>2.0.0.8</version>
     </dependency>
 
 And inherit the PushState module in your GWT module:
@@ -58,4 +58,5 @@ Instead use gwt-pushstate 1.1.4:
 </dependency>
 ```
 
-Due to changes to GWT's History class 1.1.4 is incompatible with GWT 2.7 and higher.
+Due to changes to GWT's History class 1.1.4 is incompatible with GWT 2.7 and higher. GWT 2.7 is also required
+for my fork of gwt-pushstate because of dependency to [gwt-commons-lang3](https://github.com/ManfredTremmel/gwt-commons-lang3) which uses JRE-Emulations which have been introduced in GWT 2.7. If you still use GWT 2.6.1 or older, try the original 2.0.0 from [https://github.com/rdwallis/gwt-pushstate](https://github.com/rdwallis/gwt-pushstate).

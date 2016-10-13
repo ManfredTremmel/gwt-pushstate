@@ -8,9 +8,10 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.wallissoftware.pushstate.client.PushStateHistorian;
+
 /**
- * Common logic for {@link HyperlinkPushState} and {@link InlineHyperlinkPushState}. 
- * 
+ * Common logic for {@link HyperlinkPushState} and {@link InlineHyperlinkPushState}.
+ *
  * @author Daniel Hari
  *
  */
@@ -20,50 +21,49 @@ class HyperlinkPushStateDelegate {
 
   private String targetHistoryToken;
 
-  private Hyperlink target;
+  private final Hyperlink target;
 
-  HyperlinkPushStateDelegate(Hyperlink hyperlink) {
+  HyperlinkPushStateDelegate(final Hyperlink hyperlink) {
     this.target = hyperlink;
   }
 
-  public void setTargetHistoryToken(String ptargetHistoryToken) {
+  public void setTargetHistoryToken(final String ptargetHistoryToken) {
     assert ptargetHistoryToken != null : "New history item cannot be null!";
 
     this.targetHistoryToken = CodeServerParameterHelper.append(ptargetHistoryToken);
 
-    final String href = PushStateHistorian.getRelativePath() + ensureHasRoot(this.targetHistoryToken);
-    ((Element) target.getElement().getChild(0)).setPropertyString("href", href);
+    final String href =
+        PushStateHistorian.getRelativePath() + this.ensureHasRoot(this.targetHistoryToken);
+    ((Element) this.target.getElement().getChild(0)).setPropertyString("href", href);
   }
 
   private String ensureHasRoot(final String ptargetHistoryToken) {
-    return (ptargetHistoryToken.length() > 0 && ptargetHistoryToken.charAt(0) == '/') ? ptargetHistoryToken
-        : "/" + ptargetHistoryToken;
+    return (ptargetHistoryToken.length() > 0 && ptargetHistoryToken.charAt(0) == '/')
+        ? ptargetHistoryToken : "/" + ptargetHistoryToken;
   }
 
   public String getTargetHistoryToken() {
-    return targetHistoryToken;
+    return this.targetHistoryToken;
   }
 
-  public void onBrowserEvent(Event pevent) {
+  public void onBrowserEvent(final Event pevent) {
     switch (DOM.eventGetType(pevent)) {
-    case Event.ONMOUSEOVER:
-    case Event.ONMOUSEOUT:
-      // Only fire the mouse over event if it's coming from outside this widget.
-      // Only fire the mouse out event if it's leaving this widget.
-      final Element related = pevent.getRelatedEventTarget().cast();
-      if (related != null && target.getElement().isOrHasChild(related)) {
-        return;
-      }
-      break;
-    default:
-      break;
+      case Event.ONMOUSEOVER:
+      case Event.ONMOUSEOUT:
+        // Only fire the mouse over event if it's coming from outside this widget.
+        // Only fire the mouse out event if it's leaving this widget.
+        final Element related = pevent.getRelatedEventTarget().cast();
+        if (related != null && this.target.getElement().isOrHasChild(related)) {
+          return;
+        }
+        break;
+      default:
+        break;
     }
-    DomEvent.fireNativeEvent(pevent, target, target.getElement());
+    DomEvent.fireNativeEvent(pevent, this.target, this.target.getElement());
     if (DOM.eventGetType(pevent) == Event.ONCLICK && !pevent.getCtrlKey()) {
       HyperlinkPushStateDelegate.HISTORIAN.newItem(this.getTargetHistoryToken(), true);
       pevent.preventDefault();
     }
-
   }
-
 }
