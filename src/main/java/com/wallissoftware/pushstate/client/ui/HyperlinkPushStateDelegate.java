@@ -34,7 +34,7 @@ class HyperlinkPushStateDelegate {
 
     final String href =
         PushStateHistorian.getRelativePath() + this.ensureHasRoot(this.targetHistoryToken);
-    ((Element) this.target.getElement().getChild(0)).setPropertyString("href", href);
+    this.target.getElement().setPropertyString("href", href);
   }
 
   private String ensureHasRoot(final String ptargetHistoryToken) {
