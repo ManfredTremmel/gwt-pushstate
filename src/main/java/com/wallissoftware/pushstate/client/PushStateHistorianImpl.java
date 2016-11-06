@@ -24,6 +24,13 @@ import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceHistoryHandler.Historian;
 import com.google.gwt.user.client.Window;
 
+import elemental.client.Browser;
+import elemental.events.Event;
+import elemental.events.EventListener;
+import elemental.events.PopStateEvent;
+import elemental.json.JsonObject;
+import elemental.json.impl.JsonUtil;
+
 import org.apache.commons.lang3.StringUtils;
 
 public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers<String> {
@@ -80,20 +87,27 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
     this.handlers.fireEvent(pevent);
   }
 
-  private native void registerPopstateHandler()/*-{
-    var that = this;
-    var oldHandler = $wnd.onpopstate;
-    $wnd.onpopstate = $entry(function(e) {
-      if (e) {
-        if (e.state) {
-          that.@com.wallissoftware.pushstate.client.PushStateHistorianImpl::onPopState(Ljava/lang/String;)(e.state.token);
-        }
-        if (oldHandler) {
-          oldHandler(e);
+  private void registerPopstateHandler() {
+    final EventListener oldHandler = Browser.getWindow().getOnpopstate();
+    Browser.getWindow().setOnpopstate(new EventListener() {
+
+      @Override
+      public void handleEvent(final Event pevt) {
+        if (pevt instanceof PopStateEvent) {
+          final Object state = ((PopStateEvent) pevt).getState();
+          if (state != null) {
+            final JsonObject token = JsonUtil.parse(state.toString());
+            if (token != null) {
+              PushStateHistorianImpl.this.onPopState(token.getString("token"));
+            }
+          }
+          if (oldHandler != null) {
+            oldHandler.handleEvent(pevt);
+          }
         }
       }
     });
-  }-*/;
+  }
 
   private void onPopState(final String ptoken) {
     if (this.setToken(ptoken)) {
@@ -120,13 +134,15 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
     return token;
   }
 
-  private static native void replaceState(final String prelativePath, final String ptoken) /*-{
-    $wnd.history.replaceState({'token' : ptoken}, $doc.title, prelativePath + ptoken);
-  }-*/;
+  private static void replaceState(final String prelativePath, final String ptoken) {
+    Browser.getWindow().getHistory().replaceState("{\"token\" : \"" + ptoken + "\"}",
+        Browser.getDocument().getTitle(), prelativePath + ptoken);
+  }
 
-  private static native void pushState(final String prelativePath, final String ptoken) /*-{
-    $wnd.history.pushState({'token' : ptoken}, $doc.title, prelativePath + ptoken);
-  }-*/;
+  private static void pushState(final String prelativePath, final String ptoken) {
+    Browser.getWindow().getHistory().pushState("{\"token\" : \"" + ptoken + "\"}",
+        Browser.getDocument().getTitle(), prelativePath + ptoken);
+  }
 
   private final boolean setToken(final String pnewToken) {
     final String newToken = this.stripRelativePath(pnewToken);
