@@ -28,12 +28,14 @@ import elemental.client.Browser;
 import elemental.events.Event;
 import elemental.events.EventListener;
 import elemental.events.PopStateEvent;
+import elemental.json.Json;
 import elemental.json.JsonObject;
-import elemental.json.impl.JsonUtil;
 
 import org.apache.commons.lang3.StringUtils;
 
 public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers<String> {
+
+  private static final String TOKEN_NAME = "token";
 
   private final EventBus handlers = new SimpleEventBus();
   private String token;
@@ -94,12 +96,17 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
       @Override
       public void handleEvent(final Event pevt) {
         if (pevt instanceof PopStateEvent) {
-          final Object state = ((PopStateEvent) pevt).getState();
-          if (state != null) {
-            final JsonObject token = JsonUtil.parse(state.toString());
-            if (token != null) {
-              PushStateHistorianImpl.this.onPopState(token.getString("token"));
+          final Object stateJason = ((PopStateEvent) pevt).getState();
+          if (stateJason instanceof JsonObject
+              && ((JsonObject) stateJason).hasKey(PushStateHistorianImpl.TOKEN_NAME)) {
+            String token = null;
+            try {
+              token = ((JsonObject) stateJason).getString(PushStateHistorianImpl.TOKEN_NAME);
+            } catch (final ClassCastException e) {
+              // this only happens on super dev mode
+              token = ((JsonObject) stateJason).toJson().split("\"")[3];
             }
+            PushStateHistorianImpl.this.onPopState(token);
           }
           if (oldHandler != null) {
             oldHandler.handleEvent(pevt);
@@ -135,12 +142,16 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
   }
 
   private static void replaceState(final String prelativePath, final String ptoken) {
-    Browser.getWindow().getHistory().replaceState("{\"token\" : \"" + ptoken + "\"}",
+    final JsonObject tokenObject = Json.createObject();
+    tokenObject.put(PushStateHistorianImpl.TOKEN_NAME, ptoken);
+    Browser.getWindow().getHistory().replaceState(tokenObject.toNative(),
         Browser.getDocument().getTitle(), prelativePath + ptoken);
   }
 
   private static void pushState(final String prelativePath, final String ptoken) {
-    Browser.getWindow().getHistory().pushState("{\"token\" : \"" + ptoken + "\"}",
+    final JsonObject tokenObject = Json.createObject();
+    tokenObject.put(PushStateHistorianImpl.TOKEN_NAME, ptoken);
+    Browser.getWindow().getHistory().pushState(tokenObject.toNative(),
         Browser.getDocument().getTitle(), prelativePath + ptoken);
   }
 
