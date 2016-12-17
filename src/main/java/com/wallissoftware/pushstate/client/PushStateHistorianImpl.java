@@ -68,18 +68,18 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
    *
    * @param ptoken token of the page
    * @param pissueEvent issue event
-   * @param preplaceState repace state
+   * @param preplaceState replace state
    */
   public void newItem(final String ptoken, final boolean pissueEvent, final boolean preplaceState) {
-    if (pissueEvent) {
-      ValueChangeEvent.fire(this, ptoken);
-    } else {
-      if (this.setToken(ptoken)) {
-        if (preplaceState) {
-          PushStateHistorianImpl.replaceState(this.relativePath, this.token);
-        } else {
-          PushStateHistorianImpl.pushState(this.relativePath, this.token);
-        }
+    if (this.setToken(ptoken)) {
+      if (preplaceState) {
+        PushStateHistorianImpl.replaceState(this.relativePath, this.token);
+      } else {
+        PushStateHistorianImpl.pushState(this.relativePath, this.token);
+      }
+
+      if (pissueEvent) {
+        ValueChangeEvent.fire(this, this.token);
       }
     }
   }
