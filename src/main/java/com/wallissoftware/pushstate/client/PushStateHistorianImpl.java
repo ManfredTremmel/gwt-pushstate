@@ -125,6 +125,7 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
   private final void initToken() {
     final String token = Window.Location.getPath() + Window.Location.getQueryString();
     this.setToken(token);
+    PushStateHistorianImpl.replaceState(this.relativePath, this.getToken());
   }
 
   private String stripStartSlash(final String pinput) {
