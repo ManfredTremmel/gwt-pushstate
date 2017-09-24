@@ -122,7 +122,7 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
     }
   }
 
-  private final void initToken() {
+  private void initToken() {
     final String token = Window.Location.getPath() + Window.Location.getQueryString();
     this.setToken(token);
     PushStateHistorianImpl.replaceState(this.relativePath, this.getToken());
@@ -156,7 +156,7 @@ public class PushStateHistorianImpl implements Historian, HasValueChangeHandlers
         Browser.getDocument().getTitle(), prelativePath + ptoken);
   }
 
-  private final boolean setToken(final String pnewToken) {
+  private boolean setToken(final String pnewToken) {
     final String newToken = this.stripRelativePath(pnewToken);
     if (!this.matchesToken(newToken)) {
       this.token = newToken;
