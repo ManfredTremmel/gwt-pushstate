@@ -1,3 +1,5 @@
+# This project is read only and was moved to gitlab: [https://gitlab.com/ManfredTremmel/gwt-pushstate](https://gitlab.com/ManfredTremmel/gwt-pushstate)
+
 # gwt-pushstate
 
 gwt-pushstate implements easy to use HTML5 pushState support for GWT projects.
